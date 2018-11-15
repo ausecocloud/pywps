@@ -95,6 +95,8 @@ def load_configuration(cfgfiles=None):
     # If this flag is enabled it will set the HOME environment
     # for each process to its current workdir (a temp folder).
     CONFIG.set('server', 'sethomedir', 'false')
+    # server storage
+    CONFIG.set('server', 'storage', 'default')
 
     CONFIG.add_section('processing')
     CONFIG.set('processing', 'mode', 'default')
@@ -239,3 +241,50 @@ def get_size_mb(mbsize):
         newsize *= 1
     LOGGER.debug('Calculated real size of %s is %s', mbsize, newsize)
     return newsize
+
+
+ENTRY_POINTS = None
+
+
+def _load_entrypoints():
+    global ENTRY_POINTS
+    try:
+        from pkg_resources import iter_entry_points
+        processing = {}
+        storage = {}
+        ENTRY_POINTS = {
+            'pywps_processing': processing,
+            'pywps_storage': storage,
+        }
+        for ep in iter_entry_points('pywps_processing'):
+            processing[ep.name] = ep.load()
+        for ep in iter_entry_points('pywps_storage'):
+            storage[ep.name] = ep.load()
+    except ImportError:
+        LOGGER.warn('pkg_resources entrypoints not available.')
+        from pywps.processing.basic import MultiProcessing
+        from pywps.processing.scheduler import Scheduler
+        from pywps.inout.storage import FileStorage
+        ENTRY_POINTS = {
+            'pywps_processing': {
+                'default': MultiProcessing,
+                'multiprocessing': MultiProcessing,
+                'scheduler': Scheduler,
+            },
+            'pywps_storage': {
+                'default': FileStorage,
+                'FileStorage': FileStorage,
+            }
+        }
+
+
+def resolve_processing_mode(mode):
+    if not ENTRY_POINTS:
+        _load_entrypoints()
+    return ENTRY_POINTS['pywps_processing'][mode]
+
+
+def resolve_storage_class(storage):
+    if not ENTRY_POINTS:
+        _load_entrypoints()
+    return ENTRY_POINTS['pywps_storage'][storage]

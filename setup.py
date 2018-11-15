@@ -53,7 +53,18 @@ CONFIG = {
     'scripts': [],
     'entry_points': {
         'console_scripts': [
-            'joblauncher=pywps.processing.job:launcher', ]},
+            'joblauncher=pywps.processing.job:launcher',
+        ],
+        'pywps_processing': [
+            'default = pywps.processing.basic:MultiProcessing',
+            'multiprocessing = pywps.processing.basic:MultiProcessing',
+            'scheduler = pywps.processing.scheduler:Scheduler'
+        ],
+        'pywps_storage': [
+            'default = pywps.inout.storage:FileStorage',
+            'FileStorage = pywps.inout.storage:FileStorage'
+        ]
+    },
 }
 
 setup(**CONFIG)

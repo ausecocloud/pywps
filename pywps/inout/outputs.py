@@ -8,8 +8,8 @@ WPS Output classes
 
 import lxml.etree as etree
 import six
+from pywps import configuration as config
 from pywps.inout import basic
-from pywps.inout.storage import FileStorage
 from pywps.validator.mode import MODE
 
 
@@ -110,7 +110,9 @@ class ComplexOutput(basic.ComplexOutput):
         if self.prop == 'url':
             data["href"] = self.url
         elif self.prop is not None:
-            self.storage = FileStorage()
+            storage = config.get_config_value('server', 'storage')
+            storage_class = config.resolve_storage(storage)
+            self.storage = storage_class()
             data["href"] = self.get_url()
 
         return data
