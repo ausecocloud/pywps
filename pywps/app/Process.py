@@ -131,9 +131,9 @@ class Process(object):
         for outpt in self.outputs:
             outpt.uuid = uuid
 
-        file_path = config.get_config_value('server', 'outputpath')
+        file_path = config.get_config_value('server', 'statuspath')
 
-        file_url = config.get_config_value('server', 'outputurl')
+        file_url = config.get_config_value('server', 'statusurl')
 
         self.status_location = os.path.join(file_path, str(self.uuid)) + '.xml'
         self.status_url = os.path.join(file_url, str(self.uuid)) + '.xml'

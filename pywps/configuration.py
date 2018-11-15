@@ -85,6 +85,9 @@ def load_configuration(cfgfiles=None):
     outputpath = tempfile.gettempdir()
     CONFIG.set('server', 'outputurl', 'file://%s' % outputpath)
     CONFIG.set('server', 'outputpath', outputpath)
+    statuspath = tempfile.gettempdir()
+    CONFIG.set('server', 'statusurl', 'file://%s' % statuspath)
+    CONFIG.set('server', 'statuspath', statuspath)
     # list of allowed input paths (file url input) seperated by ':'
     CONFIG.set('server', 'allowedinputpaths', '')
     CONFIG.set('server', 'workdir', tempfile.gettempdir())
@@ -164,7 +167,7 @@ def _check_config():
                            (confid, confvalue, os.path.abspath(confvalue)))
             CONFIG.set('server', confid, os.path.abspath(confvalue))
 
-    [checkdir(n) for n in ['workdir', 'outputpath']]
+    [checkdir(n) for n in ['workdir', 'outputpath', 'statuspath']]
 
 
 def _get_default_config_files_location():
