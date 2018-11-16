@@ -284,7 +284,7 @@ def resolve_processing_mode(mode):
     return ENTRY_POINTS['pywps_processing'][mode]
 
 
-def resolve_storage_class(storage):
+def resolve_storage(storage):
     if not ENTRY_POINTS:
         _load_entrypoints()
     return ENTRY_POINTS['pywps_storage'][storage]
